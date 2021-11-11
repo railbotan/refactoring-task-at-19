@@ -4,10 +4,10 @@ import numpy as np
 
 class ConvertImage:
 
-    def __init__(self, image, size, step):
+    def __init__(self, image, size, gradation):
         self.image = image
         self.size = size
-        self.step = 255 // step
+        self.step = 255 // gradation
 
     def convert_image(self):
         height = len(self.image)
@@ -25,7 +25,7 @@ class ConvertImage:
         return int((self.image[i:i + self.size, j:j + self.size].sum()) // self.size ** 2)
 
 
-original_image = Image.open("img2.jpg")
+original_image = Image.open(input("Введите имя исходного изображения:"))
 pixels = np.array(original_image)
-result = ConvertImage(pixels, 10, 50).convert_image()
-result.save('res.jpg')
+result = ConvertImage(pixels, size=10, gradation=50).convert_image()
+result.save((input("Введите имя изображения, в которое запишется результат:")))
