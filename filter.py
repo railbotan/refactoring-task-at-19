@@ -1,28 +1,36 @@
 from PIL import Image
 import numpy as np
-img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
-i = 0
-while i < a - 11:
-    j = 0
-    while j < a1 - 11:
-        s = 0
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                n1 = arr[n][n1][0]
-                n2 = arr[n][n1][1]
-                n3 = arr[n][n1][2]
-                M = n1 + n2 + n3
-                s += M
-        s = int(s // 100)
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
-        j = j + 10
-    i = i + 10
-res = Image.fromarray(arr)
-res.save('res.jpg')
+
+
+class GrayMosaicFilter:
+    def apply_filter(self, image_name, mosaic_size, gradation):
+        self.mosaic_size = mosaic_size
+        self.gradation = 255 // gradation
+        self.image_array = np.array(Image.open(image_name))
+
+        height = len(self.image_array)
+        width = len(self.image_array[1])
+        for x in range(0, width, self.mosaic_size):
+            for y in range(0, height, self.mosaic_size):
+                brightness_average = self._get_brightness_average(x, y)
+                self._set_pixel_color(x, y, brightness_average)
+        return self.image_array
+
+    def _get_brightness_average(self, x, y):
+        return int(
+            (self.image_array[x: x + self.mosaic_size, y: y + self.mosaic_size].sum()) / 3 // self.mosaic_size ** 2)
+
+    def _set_pixel_color(self, x, y, average):
+        self.image_array[x: x + self.mosaic_size, y: y + self.mosaic_size] = int(average // self.gradation) * \
+                                                                             self.gradation
+
+
+if __name__ == "__main__":
+    image_input_name = input("Введите имя исходного изображения:")
+    mosaic_size = int(input("Размер мозайки:"))
+    gradation_level = int(input("Уровней градации:"))
+    image_output_name = input("Название изображения на выходе:")
+
+    filtered_array = GrayMosaicFilter().apply_filter(image_input_name, mosaic_size, gradation_level)
+    result_image = Image.fromarray(filtered_array)
+    result_image.save(image_output_name)
