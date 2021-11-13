@@ -26,6 +26,11 @@ class GrayMosaicFilter:
 
 
 if __name__ == "__main__":
-    filtered_array = GrayMosaicFilter().apply_filter("img2.jpg", 10, 5)
+    image_input_name = input("Введите имя исходного изображения:")
+    mosaic_size = int(input("Размер мозайки:"))
+    gradation_level = int(input("Уровней градации:"))
+    image_output_name = input("Название изображения на выходе:")
+
+    filtered_array = GrayMosaicFilter().apply_filter(image_input_name, mosaic_size, gradation_level)
     result_image = Image.fromarray(filtered_array)
-    result_image.save('res.jpg')
+    result_image.save(image_output_name)
