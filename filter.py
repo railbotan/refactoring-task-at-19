@@ -1,6 +1,7 @@
 from PIL import Image
 import numpy as np
-img = Image.open("img2.jpg")
+img = Image.open(input("Enter image you want to change: "))
+result_img = input("Enter image to write your result onto: ")
 arr = np.array(img)
 height = len(arr)
 width = len(arr[1])
@@ -29,4 +30,4 @@ class Grey:
 
 newPicture = Grey(step, height, width, size, arr)
 res = Image.fromarray(newPicture.getGrey())
-res.save('res.jpg')
+res.save(result_img)
