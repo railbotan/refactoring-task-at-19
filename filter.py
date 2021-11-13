@@ -20,24 +20,13 @@ class Grey:
     while i < self.height:
       j = 0
       while j < self.width:
-        average = 0
-        for n in range(i, i + self.size):
-            for n1 in range(j, j + self.size):
-                r = self.arr[n][n1][0]
-                g = self.arr[n][n1][1]
-                b = self.arr[n][n1][2]
-                grey = (int(r) + int(g) + int(b)) / 3
-                average += grey
-        average = int(average // (self.size*self.size))
-        for n in range(i, i + self.size):
-            for n1 in range(j, j + self.size):
-                self.arr[n][n1][0] = int(average // self.step) * self.step
-                self.arr[n][n1][1] = int(average // self.step) * self.step
-                self.arr[n][n1][2] = int(average // self.step) * self.step
-            j = j + self.size
-            i = i + self.size
-        return self.arr
+        color_sum = np.sum((self.arr[i: i + self.size, j: j + self.size]) / 3)
+        average = int(color_sum // (self.size*self.size))
+        self.arr[i: i + self.size, j: j + self.size] = int(average // self.step) * self.step
+        j = j + self.size
+      i = i + self.size
+    return self.arr
 
-        newPicture = Grey(step, height, width, size, arr)
-        res = Image.fromarray(newPicture.getGrey())
-        res.save('res.jpg')
+newPicture = Grey(step, height, width, size, arr)
+res = Image.fromarray(newPicture.getGrey())
+res.save('res.jpg')
