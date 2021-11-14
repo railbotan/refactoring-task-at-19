@@ -13,7 +13,8 @@ def set_gray_in_cell(row, column):
 
 
 input_data = input("Enter cell size and gradation\n").split()
-image = Image.open("img2.jpg")
+image = Image.open(input("Enter source file name\n"))
+result = input("Enter result file name\n")
 cell_size = int(input_data[0])
 gradation = 255 // int(input_data[1])
 pixels_matrix = np.array(image)
@@ -29,4 +30,4 @@ while current_row < rows_count:
         current_column = current_column + cell_size
     current_row = current_row + cell_size
 
-Image.fromarray(pixels_matrix).save("res.jpg")
+Image.fromarray(pixels_matrix).save(f"{result}")
