@@ -1,28 +1,31 @@
 from PIL import Image
 import numpy as np
-img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
-i = 0
-while i < a - 11:
-    j = 0
-    while j < a1 - 11:
-        s = 0
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                n1 = arr[n][n1][0]
-                n2 = arr[n][n1][1]
-                n3 = arr[n][n1][2]
-                M = n1 + n2 + n3
-                s += M
-        s = int(s // 100)
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
-        j = j + 10
-    i = i + 10
-res = Image.fromarray(arr)
-res.save('res.jpg')
+class Filter():
+    def __init__(self, img, mosaic_size, grayscale):
+        self.arr = np.array(img)
+        self.mosaic_size = mosaic_size
+        self.grayscale = grayscale
+        
+    def __GetAverage(self, y, x):
+        average = np.sum((self.arr[y: y + self.mosaic_size, x: x + self.mosaic_size]))/3
+        return int(average // (self.mosaic_size*self.mosaic_size))
+    
+    def __DoGray(self, y, x):
+        average = self.__GetAverage(y, x)
+        self.arr[y: y + self.mosaic_size, x: x + self.mosaic_size] = int(average // self.grayscale) * self.grayscale
+
+    def __SaveResult(self, newIMG):
+        res = Image.fromarray(self.arr)
+        res.save(newIMG)
+                
+    def StartFilter(self, newIMG):
+        height, width = len(self.arr), len(self.arr[1])
+        for y in range(0, height, self.mosaic_size):
+            for x in range(0, width, self.mosaic_size):
+                self.__DoGray(y, x)
+                
+        self.__SaveResult(newIMG)
+
+img = Image.open(input("Введите название изображение: "))
+filtr = Filter(img, 10, 50)
+filtr.StartFilter(input("Введите новое название изображение: "))
