@@ -3,18 +3,13 @@ import numpy as np
 
 
 def calculate_gray_cell(row, column):
-    gray_cell = 0
-    for x in range(row, min(row + cell_size, rows_count)):
-        for y in range(column, min(column + cell_size, columns_count)):
-            gray_cell += sum(pixels_matrix[x][y]) // 3
-    return int(gray_cell // (cell_size ** 2))
+    mosaic = pixels_matrix[row:min(row + cell_size, rows_count), column:min(column + cell_size, columns_count)]
+    return int((np.sum(mosaic) // 3) // (cell_size ** 2))
 
 
 def set_gray_in_cell(row, column):
-    for x in range(row, min(row + cell_size, rows_count)):
-        for y in range(column, min(column + cell_size, columns_count)):
-            for channel in range(0, 3):
-                pixels_matrix[x][y][channel] = int(gray // gradation) * gradation
+    mosaic = pixels_matrix[row:min(row + cell_size, rows_count), column:min(column + cell_size, columns_count)]
+    np.place(mosaic[:, ], mosaic >= 0, int(gray // gradation) * gradation)
 
 
 input_data = input("Enter cell size and gradation\n").split()
