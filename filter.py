@@ -14,18 +14,18 @@ class Filter():
         average = self.__GetAverage(y, x)
         self.arr[y: y + self.mosaic_size, x: x + self.mosaic_size] = int(average // self.grayscale) * self.grayscale
 
-    def __SaveResult(self):
+    def __SaveResult(self, newIMG):
         res = Image.fromarray(self.arr)
-        res.save('res.jpg')
+        res.save(newIMG)
                 
-    def StartFilter(self):
+    def StartFilter(self, newIMG):
         height, width = len(self.arr), len(self.arr[1])
         for y in range(0, height, self.mosaic_size):
             for x in range(0, width, self.mosaic_size):
                 self.__DoGray(y, x)
                 
-        self.__SaveResult()
+        self.__SaveResult(newIMG)
 
-img = Image.open("img2.jpg")
+img = Image.open(input("Введите название изображение: "))
 filtr = Filter(img, 10, 50)
-filtr.StartFilter()
+filtr.StartFilter(input("Введите новое название изображение: "))
