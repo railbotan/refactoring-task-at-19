@@ -7,22 +7,12 @@ class Filter():
         self.grayscale = grayscale
         
     def __GetAverage(self, y, x):
-        average = 0
-        for n in range(y, y + self.mosaic_size):
-            for m in range(x, x + self.mosaic_size):
-                R = int(self.arr[n][m][0])
-                G = int(self.arr[n][m][1])
-                B = int(self.arr[n][m][2])
-                median = R + G + B
-                average += median
+        average = np.sum((self.arr[y: y + self.mosaic_size, x: x + self.mosaic_size]))/3
         return int(average // (self.mosaic_size*self.mosaic_size))
     
-    def __DoGray(self, y, x, average):
-        for n in range(y, y + self.mosaic_size):
-            for m in range(x, x + self.mosaic_size):
-                self.arr[n][m][0] = int(average // self.grayscale) * self.grayscale/3
-                self.arr[n][m][1] = int(average // self.grayscale) * self.grayscale/3
-                self.arr[n][m][2] = int(average // self.grayscale) * self.grayscale/3
+    def __DoGray(self, y, x):
+        average = self.__GetAverage(y, x)
+        self.arr[y: y + self.mosaic_size, x: x + self.mosaic_size] = int(average // self.grayscale) * self.grayscale
 
     def __SaveResult(self):
         res = Image.fromarray(self.arr)
@@ -30,14 +20,10 @@ class Filter():
                 
     def StartFilter(self):
         height, width = len(self.arr), len(self.arr[1])
-        y = 0
-        while y < height:
-            x = 0
-            while x < width:
-                average = self.__GetAverage(y, x)
-                self.__DoGray(y, x, average)
-                x = x + self.mosaic_size
-            y = y + self.mosaic_size
+        for y in range(0, height, self.mosaic_size):
+            for x in range(0, width, self.mosaic_size):
+                self.__DoGray(y, x)
+                
         self.__SaveResult()
 
 img = Image.open("img2.jpg")
