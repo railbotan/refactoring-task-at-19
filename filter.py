@@ -1,26 +1,51 @@
+import PIL
 from PIL import Image
 import numpy as np
 
 
-def get_average(x, y, pixel_size):
-    average = np.sum((img_arr[y: y + pixel_size, x: x + pixel_size])) / 3
-    return int(average // (pixel_size * pixel_size))
+class Image2PixelFilter:
+    def __init__(self, p_size, g_scale_step):
+        self.__pixel_size = p_size
+        self.__grayscale_step = g_scale_step
+        self.__img_arr = None
+
+    def get_average(self, x, y):
+        average = np.sum((self.__img_arr[y: y + self.__pixel_size, x: x + self.__pixel_size])) / 3
+        return int(average // (self.__pixel_size * self.__pixel_size))
+
+    def make_gray(self, x, y):
+        average = self.get_average(x, y)
+        self.__img_arr[y: y + self.__pixel_size, x: x + self.__pixel_size] = \
+            int(average // self.__grayscale_step) * self.__grayscale_step
+
+    def convert(self, in_file, out_file):
+        try:
+            self.__img_arr = np.array(Image.open(in_file))
+            height, width = len(self.__img_arr), len(self.__img_arr[1])
+            for y in range(0, height, self.__pixel_size):
+                for x in range(0, width, self.__pixel_size):
+                    self.make_gray(x, y)
+            res = Image.fromarray(self.__img_arr)
+            res.save(out_file)
+            print("Готово")
+        except FileNotFoundError:
+            print(f"'{in_file}' не найден. Проверьте правильность введенного имени")
+        except PIL.UnidentifiedImageError:
+            print(f"'{in_file}' не является изображением. Проверьте правильность введенного имени")
+        except ValueError:
+            print(f"Невозможно записать полученное изображение в '{out_file}'. Проверьте расширение файла")
 
 
-def make_gray(x, y, pixel_size, grayscale):
-    average = get_average(x, y, pixel_size)
-    img_arr[y: y + pixel_size, x: x + pixel_size] = int(average // grayscale) * grayscale
+input_file = input("Имя входного изображения: ")
+output_file = input("Имя выходного изображения: ")
+
+pixel_size = input("Размер пикселей(необязательно): ")
+p_size_int = int(pixel_size) if pixel_size.isdigit() else 10
+
+grayscale_step = input("Шаг градации серого(необязательно): ")
+g_scale_step_int = int(grayscale_step) if grayscale_step.isdigit() else 50
 
 
-def convert(pixel_size, grayscale):
-    height, width = len(img_arr), len(img_arr[1])
-    for y in range(0, height, pixel_size):
-        for x in range(0, width, pixel_size):
-            make_gray(x, y, pixel_size, grayscale)
-    res = Image.fromarray(img_arr)
-    res.save('res.jpg')
+f = Image2PixelFilter(p_size_int, g_scale_step_int)
+f.convert(input_file, output_file)
 
-
-img = Image.open("img2.jpg")
-img_arr = np.array(img)
-convert(10, 50)
