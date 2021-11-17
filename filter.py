@@ -27,5 +27,7 @@ class ConvertImage:
 
 original_image = Image.open(input("Введите имя исходного изображения:"))
 pixels = np.array(original_image)
-result = ConvertImage(pixels, size=10, gradation=50).convert_image()
+s = int(input("Введите размер блока (целое положительное число):"))
+grad = int(input('Введите количество оттенков (целое положительное число):'))
+result = ConvertImage(pixels, s, grad).convert_image()
 result.save((input("Введите имя изображения, в которое запишется результат:")))
