@@ -1,28 +1,28 @@
 from PIL import Image
 import numpy as np
 img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
+finImage = np.array(img)
+height = len(finImage)
+width = len(finImage[1])
 i = 0
-while i < a - 11:
+while i < height:
     j = 0
-    while j < a1 - 11:
+    while j < width:
         s = 0
         for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                n1 = arr[n][n1][0]
-                n2 = arr[n][n1][1]
-                n3 = arr[n][n1][2]
-                M = n1 + n2 + n3
-                s += M
+            for m in range(j, j + 10):
+                color1 = finImage[n][m][0]
+                color2 = finImage[n][m][1]
+                color3 = finImage[n][m][2]
+                color = (int(color1) + int(color2) + int(color3)) / 3
+                s += color
         s = int(s // 100)
         for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
+            for m in range(j, j + 10):
+                finImage[n][m][0] = int(s // 50) * 50
+                finImage[n][m][1] = int(s // 50) * 50
+                finImage[n][m][2] = int(s // 50) * 50
         j = j + 10
     i = i + 10
-res = Image.fromarray(arr)
+res = Image.fromarray(finImage)
 res.save('res.jpg')
