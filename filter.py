@@ -53,5 +53,9 @@ class PixelArt:
         return img
 
 
-img = PixelArt.imgToNpArr("img2.jpg")
-PixelArt.saveImg(PixelArt.createPixel(img, 10, 50), 'final.jpg')
+img = PixelArt.imgToNpArr(input('Enter picture name'))
+output = input("Enter result picture name")
+size = int(input("Write pic size"))
+grayscale = input("Write grayscale step (optionally)")
+grayscale = int(grayscale) if grayscale.isdigit() else 50
+PixelArt.saveImg(PixelArt.createPixel(img, size, grayscale), output)
