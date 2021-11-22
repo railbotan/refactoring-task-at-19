@@ -3,25 +3,14 @@ import numpy as np
 
 
 def get_average_brightness(start_x, start_y, pixel_size):
-    average = 0
-    for y in range(start_y, start_y + pixel_size):
-        for x in range(start_x, start_x + pixel_size):
-            r = img_arr[y][x][0]
-            g = img_arr[y][x][1]
-            b = img_arr[y][x][2]
-            brightness_mid = (int(r) + int(g) + int(b)) / 3
-            average += brightness_mid
+    average = np.sum((img_arr[start_y: start_y + pixel_size, start_x: start_x + pixel_size])) / 3
     return int(average // (pixel_size * pixel_size))
 
 
 def set_gradation(start_x, start_y, pixel_size, grayscale):
     average = get_average_brightness(start_x, start_y, pixel_size)
     gradation = int(average // grayscale) * grayscale
-    for y in range(start_y, start_y + pixel_size):
-        for x in range(start_x, start_x + pixel_size):
-            img_arr[y][x][0] = gradation
-            img_arr[y][x][1] = gradation
-            img_arr[y][x][2] = gradation
+    img_arr[start_y: start_y + pixel_size, start_x: start_x + pixel_size] = gradation
 
 
 def img_convert(pixel_size, grayscale):
