@@ -1,28 +1,34 @@
 from PIL import Image
 import numpy as np
-img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
-i = 0
-while i < a - 11:
-    j = 0
-    while j < a1 - 11:
-        s = 0
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                n1 = arr[n][n1][0]
-                n2 = arr[n][n1][1]
-                n3 = arr[n][n1][2]
-                M = n1 + n2 + n3
-                s += M
-        s = int(s // 100)
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
-        j = j + 10
-    i = i + 10
-res = Image.fromarray(arr)
-res.save('res.jpg')
+
+
+class MosaicGenerator:
+    def __init__(self, gradation=6, step=10):
+        self.gradation = 255 / gradation
+        self.step = 10
+
+    def get_pixel_color(self, pixel_arr, i, j):
+        return np.sum(pixel_arr[i: i + self.step, j: j + self.step]) // (10 * self.step)
+
+    def set_pixel_color(self, pixel_arr, i, j, color_sum):
+        pixel_arr[i: i + self.step, j: j + self.step] = int(color_sum // self.gradation) * self.gradation / 3
+        return pixel_arr
+
+    def generate_mosaic(self, img):
+        pixel_arr = np.array(img)
+        h, w = len(pixel_arr), len(pixel_arr[1])
+        for i in range(0, h, self.step):
+            for j in range(0, w, self.step):
+                color_sum = self.get_pixel_color(pixel_arr, i, j)
+                pixel_arr = self.set_pixel_color(pixel_arr, i, j, color_sum)
+        return Image.fromarray(pixel_arr)
+
+
+print("Введите название файла, который вы хотите преобразовать")
+inp_path = input()
+print("Введите название для выходного файла")
+output_path = input()
+img = Image.open(inp_path)
+generator = MosaicGenerator(gradation=4)
+res = generator.generate_mosaic(img)
+res.save(output_path)
