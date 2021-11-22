@@ -24,7 +24,11 @@ class MosaicGenerator:
         return Image.fromarray(pixel_arr)
 
 
-img = Image.open("img2.jpg")
+print("Введите название файла, который вы хотите преобразовать")
+inp_path = input()
+print("Введите название для выходного файла")
+output_path = input()
+img = Image.open(inp_path)
 generator = MosaicGenerator(gradation=4)
 res = generator.generate_mosaic(img)
-res.save('res.jpg')
+res.save(output_path)
