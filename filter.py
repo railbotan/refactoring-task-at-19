@@ -2,28 +2,38 @@ from PIL import Image
 import numpy as np
 
 
+def get_average_brightness(start_x, start_y, pixel_size):
+    average = 0
+    for y in range(start_y, start_y + pixel_size):
+        for x in range(start_x, start_x + pixel_size):
+            r = img_arr[y][x][0]
+            g = img_arr[y][x][1]
+            b = img_arr[y][x][2]
+            brightness_mid = (int(r) + int(g) + int(b)) / 3
+            average += brightness_mid
+    return int(average // (pixel_size * pixel_size))
+
+
+def set_gradation(start_x, start_y, pixel_size, grayscale):
+    average = get_average_brightness(start_x, start_y, pixel_size)
+    gradation = int(average // grayscale) * grayscale
+    for y in range(start_y, start_y + pixel_size):
+        for x in range(start_x, start_x + pixel_size):
+            img_arr[y][x][0] = gradation
+            img_arr[y][x][1] = gradation
+            img_arr[y][x][2] = gradation
+
+
+def img_convert(pixel_size, grayscale):
+    height = len(img_arr)
+    width = len(img_arr[1])
+    for y in range(0, height, pixel_size):
+        for x in range(0, width, pixel_size):
+            set_gradation(x, y, pixel_size, grayscale)
+    res = Image.fromarray(img_arr)
+    res.save('res.jpg')
+
+
 img = Image.open("img2.jpg")
-arr = np.array(img)
-a = len(arr)
-a1 = len(arr[1])
-i = 0
-while i < a:
-    j = 0
-    while j < a1:
-        s = 0
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                r = arr[n][n1][0]
-                g = arr[n][n1][1]
-                b = arr[n][n1][2]
-                s += (int(r) + int(g) + int(b)) / 3
-        s = int(s // 100)
-        for n in range(i, i + 10):
-            for n1 in range(j, j + 10):
-                arr[n][n1][0] = int(s // 50) * 50
-                arr[n][n1][1] = int(s // 50) * 50
-                arr[n][n1][2] = int(s // 50) * 50
-        j = j + 10
-    i = i + 10
-res = Image.fromarray(arr)
-res.save('res.jpg')
+img_arr = np.array(img)
+img_convert(10, 50)
