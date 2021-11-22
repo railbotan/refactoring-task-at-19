@@ -40,14 +40,7 @@ class PixelArt:
         res.save(name)
 
     def avg(img, size, x, y):
-        height = len(img)
-        width = len(img[1])
-        color = 0
-        for i in range(x, min(x + size, width)):
-            for j in range(y, min(y + size, height)):
-                color += sum(int(color) for color in img[i][j]) // 3
-        color = color // (size ** 2)
-        return color
+        return np.average(img[x: x + size, y: y + size])
 
     def createPixel(img, size, grayscale):
         height = len(img)
@@ -55,9 +48,7 @@ class PixelArt:
         for y in range(0, height, size):
             for x in range(0, width, size):
                 color = PixelArt.avg(img, size, x, y)
-                for x1 in range(x, min(x + size, width)):
-                    for y1 in range(y, min(y + size, height)):
-                        img[x1][y1][0] = img[x1][y1][1] = img[x1][y1][2] = color - color % grayscale
+                img[x: x + size, y: y + size] = color - color % grayscale
 
         return img
 
